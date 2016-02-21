@@ -3,19 +3,21 @@
 ################################
 # Config section
 ################################
+backupDir="~/backup" # backup file dir
+
 dbuser="root" # mysql user name
 dbpassword="password" # mysql password
 databases=(phpmyadmin mysql) # database name that needed to be backup
-scphost="127.0.0.1" # scp host IP address
+
+scphost="10.0.0.1" # scp host IP address
 scpuser="user" # scp user
 scppassword="password" # scp user password
-scpdir="/home/${scpuser}"
+scpdir="/home/${scpuser}" # backup host dir
 
 ################################
 # Code section (DON'T CHANGE ANY CHARACTER!!)
 ################################
-backupDir="./backup" 
-logFile="./backup.log"
+logFile="~/backup.log"
 datetimeFormat="%Y-%m-%d_%H-%M-%S"
 onceBackupDir="${backupDir}/`date +${datetimeFormat}`"
 ignoreTalbeList=(dataflow_batch_export dataflow_batch_import log_customer log_quote log_summary log_summary_type log_url log_url_info log_visitor log_visitor_info log_visitor_online index_event report_event report_compared_product_index report_viewed_product_index catalog_compare_item catalogsearch_query catalogsearch_fulltextcatalogsearch_result) # ignored table name list
@@ -63,5 +65,14 @@ if [ ! ${#databases[@]} = ${#backupFiles[@]} ]; then
     exit
 fi
 
-# compress backup files into tar.bz2 package
-tar -cjf ${onceBackupDir}/backup_`date +${datetimeFormat}`.tar.bz2 ${onceBackupDir}/*.sql
+# compress backup files into tar.bz2 package (upload file)
+uploadFile="${onceBackupDir}/backup_`date +${datetimeFormat}`.tar.bz2"
+tar -cjf $uploadFile ${onceBackupDir}/*.sql
+
+# send upload file
+expect -c "
+spawn scp ${uploadFile} ${scpuser}@${scphost}:${scpdir}
+expect \"password:\"
+send \"${scppassword}\r\"
+expect eof
+"
