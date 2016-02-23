@@ -6,6 +6,8 @@ Red Hat: `yum install expect`
 
 Debian:  `apt-get install expect`
 
+* 在服务器上测试ssh链接备份机
+
 * Run install.sh 运行install.sh脚本
 
 # uninstall 卸载
