@@ -1,8 +1,12 @@
 #!/bin/bash
 
-backupDir="~/backup"
+backupDir=~/backup
 
 # remove backup directory
-rm -rf ${backupDir}
+if [ -d ${backupDir} ]; then
+    rm -rf ${backupDir}
+fi
 
-# TODO remove cron job
+#remove cron job
+crontab -l
+crontab -ir

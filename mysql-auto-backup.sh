@@ -25,14 +25,14 @@ ignoreTalbeList=(dataflow_batch_export dataflow_batch_import log_customer log_qu
 # check backupDir exsists
 if [ ! -d ${backupDir} ]; then
     echo "${backupDir} doesn't exsists."
-    exit
+    exit 1
 fi
 
 # create onceBackupDir
 mkdir -p ${onceBackupDir}
 if [ ! $? = 0 ]; then
     echo "Create ${onceBackupDir} failed."
-    exit
+    exit 2
 fi
 
 # backup databases
@@ -62,7 +62,7 @@ done
 if [ ! ${#databases[@]} = ${#backupFiles[@]} ]; then
     echo "Backup ${#backupFiles[@]} file(s) < ${#databases[@]} database(s)."
     rm -rf ${onceBackupDir}
-    exit
+    exit 3
 fi
 
 # compress backup files into tar.bz2 package (upload file)
